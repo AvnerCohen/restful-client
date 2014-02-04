@@ -1,0 +1,11 @@
+development: &development
+  users:
+    url: http://1.2.3.4:7711/api/v1/
+  posts:
+    url: http://1.2.3.4:8383/api/v1/
+
+production: &production
+  users:
+    url: http://1.2.3.4:7711/api/v0/
+  posts:
+    url: http://1.2.3.4:8383/api/v0/

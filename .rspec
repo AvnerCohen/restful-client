@@ -1,0 +1,4 @@
+--color
+--drb
+--format nested
+--require spec_helper
