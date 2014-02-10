@@ -20,14 +20,9 @@ An HTTP framework for micro-services based environment, build on top of [typhoeu
 In your environment initializer:
 
 <pre>
-RESTFULL_CLIENT = RestfullClient.new("path_to_service.yml", ENV["RACK_ENV"])
-#or
-RESTFULL_CLIENT = RestfullClient.new("path_to_service.yml", Rails.env)
-#or
-RESTFULL_CLIENT = RestfullClient.new("path_to_service.yml") #"development"
 #with reporting method in case of errors (such as graylog)
 p = proc { |*args| graylog_it(*args) }
-RESTFULL_CLIENT = RestfullClient.new("path_to_service.yml", "production", &p)
+RESTFULL_CLIENT = RestfullClient.new("path_to_service.yml", &p)
 </pre>
 
 Than use the service:

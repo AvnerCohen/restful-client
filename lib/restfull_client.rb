@@ -1,12 +1,16 @@
-require 'typhoeus'
 require 'singleton'
 require 'uri'
+require 'yaml'
+
+require 'typhoeus'
+require 'service_jynx'
+
 class RestfullClient
   class ApiError < StandardError; end
 
-  attr_accessor :config, :logger, :report_method
+  attr_accessor :config, :logger, :report_method, :env
   
-  def initialize(file_name , env  = "development", &report_method)
+  def initialize(file_name, &report_method)
     raise "Configuration File Name must be provided" unless file_name.class.to_s == "String"
     @config = YAML.load(ERB.new(File.read(file_name)).result)[env].each do |name, entry|
               next unless entry.has_key?("url")
@@ -24,6 +28,10 @@ class RestfullClient
 
   def report_on
     @report_method.call ("Initialized at: #{Time.now}.")
+  end
+
+  def env
+    @env ||= ENV["RAILS_ENV"] || ENV["RACK_ENV"] || "default"
   end
 
 
