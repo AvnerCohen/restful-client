@@ -22,7 +22,7 @@ class RestfullClientConfiguration
   end
 
   def env
-    ENV["RAILS_ENV"] || ENV["RACK_ENV"] || "default"
+    (defined?(Rails) && Rails.env) || ENV["RAILS_ENV"] || ENV["RACK_ENV"] || "default"
   end
 
 end

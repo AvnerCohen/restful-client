@@ -21,25 +21,25 @@ module RestfullClient
 
 
   def get(caller, path, params = {}, &on_error_block)
-    url = URI::join(callerr_config(caller)["url"], path)
+    url = URI::join(callerr_config(caller)["url"], path).to_s
     request = Typhoeus::Request.new(url, headers: { "Accept" => "text/json" }, method: 'GET', timeout: 3, params: params)
     run_safe_request(caller, request, &on_error_block)
   end
 
   def post(caller, path, payload, &on_error_block)
-    url = URI::join(callerr_config(caller)["url"], path)
+    url = URI::join(callerr_config(caller)["url"], path).to_s
     request = Typhoeus::Request.new(url, method: 'POST', body: payload, timeout: 300)
     run_safe_request(caller, request, &on_error_block)
   end
 
   def delete(caller, path, &on_error_block)
-    url = URI::join(callerr_config(caller)["url"], path)
+    url = URI::join(callerr_config(caller)["url"], path).to_s
     request = Typhoeus::Request.new(url, method: 'DELETE', timeout: 300)
     run_safe_request(caller, request, &on_error_block)
   end
 
   def put(caller, path, payload, &on_error_block)
-    url = URI::join(callerr_config(caller)["url"], path)
+    url = URI::join(callerr_config(caller)["url"], path).to_s
     request = Typhoeus::Request.new(url, headers: { "Content-Type" => "application/json" }, method: 'PUT', body: payload.to_json(root: false), timeout: 3)
     run_safe_request(caller, request, &on_error_block)
   end
@@ -54,7 +54,7 @@ module RestfullClient
     request.on_complete do |response|
       #200, OK
       if response.success?
-        @logger.info { "Success in #{method} :: Code: #{response.response_code}, #{response.body}" }
+        @logger.debug { "Success in #{method} :: Code: #{response.response_code}, #{response.body}" }
         return "" if response.body.empty?
         return JSON.parse(response.body)
 
@@ -89,7 +89,7 @@ module RestfullClient
     else
       on_error_block.call("#{caller}_service set as down.") if on_error_block
     end
-  rescue Exception => e
+  rescue => e
     res = ServiceJynx.failure!(caller)
     @report_method.call("ServiceJynx", "Service #{caller} was taken down as a result of exception", e.message) if res == :WENT_DOWN
     on_error_block.call("Exception in #{caller}_service execution - #{e.message}") if on_error_block
