@@ -5,7 +5,7 @@ An HTTP framework for micro-services based environment, build on top of [typhoeu
 ## Installation
 
 
-    gem 'restfull_client'
+    gem 'RestfullClient'
 
 ## Features
 
@@ -20,23 +20,37 @@ An HTTP framework for micro-services based environment, build on top of [typhoeu
 In your environment initializer:
 
 <pre>
-#with reporting method in case of errors (such as graylog)
-p = proc { |*args| graylog_it(*args) }
-RESTFULL_CLIENT = RestfullClient.new("path_to_service.yml", &p)
+      RestfullClient.configure do |config|
+        config.file_name = "config/services.yml"
+      end
+</pre>
+
+
+
+<pre>
+      RestfullClient.configure do |config|
+        config.file_name = "config/services.yml"
+        config.report_method = proc {|*args| @@some_global = *args }
+      end
 </pre>
 
 Than use the service:
 
 <pre>
-RESTFULL_CLIENT.get("posts", "/comments/#{user.id}") do
+RestfullClient.get("posts", "/comments/#{user.id}") do
  [] #default value to be returned on failure
 end
 
 #or
-RESTFULL_CLIENT.post("posts", {comments: [1,2,4]}, "/comments/deleted/#{some_id}") do
+RestfullClient.delete("posts", {comments: [1,2,4]}, "/comments/#{some_id}") do
  "ok" #default value to be returned on failure
 end
 </pre>
+
+## Forward IP of client
+In a complex micro services environment, when services are chained together, you might need to pass along the original IP of the client.
+Implementaion is based on a global $client_ip that can be set and will be assigned to the "X-Forwarded-For" http header.
+So yeah, no JRuby support at this time.
 
 ## Configuration
 

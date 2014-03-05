@@ -1,37 +1,22 @@
-require 'singleton'
 require 'uri'
 require 'yaml'
-
 require 'typhoeus'
 require 'service_jynx'
+require 'restfull_client_configuration'
+require 'restfull_client_logger'
 
-class RestfullClient
-  class ApiError < StandardError; end
+module RestfullClient
+  extend self
 
-  attr_accessor :config, :logger, :report_method, :env
-  
-  def initialize(file_name, &report_method)
-    raise "Configuration File Name must be provided" unless file_name.class.to_s == "String"
-    @config = YAML.load(ERB.new(File.read(file_name)).result)[env].each do |name, entry|
-              next unless entry.has_key?("url")
-              opts = {
-                time_window_in_seconds: entry.fetch(:time_window_in_seconds, 20),
-                max_errors: entry.fetch(:max_errors, 10),
-                grace_period: entry.fetch(:grace_period, 120)
-              }
-              ServiceJynx.register!(name, opts)
-            end
-    @logger = RestfullClientLogger.logger
-    @report_method = report_method
-    report_on if @report_method
-  end
+  class RestError < StandardError; end
 
-  def report_on
-    @report_method.call ("Initialized at: #{Time.now}.")
-  end
+  attr_accessor :configuration, :logger, :report_method, :env
 
-  def env
-    @env ||= ENV["RAILS_ENV"] || ENV["RACK_ENV"] || "default"
+  def self.configure
+    self.configuration ||= RestfullClientConfiguration.new
+    yield(configuration)
+    self.configuration.run!
+    self.logger = RestfullClientLogger.logger
   end
 
 
@@ -59,35 +44,36 @@ class RestfullClient
     run_safe_request(caller, request, &on_error_block)
   end
 
-
   def callerr_config(caller)
-    key = "#{caller}".to_sym
-    @config[key]
+    configuration.data[caller]
   end
 
   def run_request(request, method, raise_on_error = false)
-    @logger.info { "#{__method__} :: Request :: #{request.inspect}" }
-
+    @logger.debug { "#{__method__} :: Request :: #{request.inspect}" }
+    request.options[:headers].merge!({'X-Forwarded-For' => $client_ip}) if $client_ip
     request.on_complete do |response|
       #200, OK
       if response.success?
         @logger.info { "Success in #{method} :: Code: #{response.response_code}, #{response.body}" }
         return "" if response.body.empty?
         return JSON.parse(response.body)
+
         #Timeout occured
       elsif response.timed_out?
         @logger.error { "Got a time out in #{method} for #{request.inspect}" }
-         @report_method.call("ApiError", "Request :: #{request.inspect} in #{method}", "timeout")
+        @report_method.call("RestError", "Request :: #{request.inspect} in #{method}", "timeout")
         reply_with(:TimeoutOccured, raise_on_error)
+
         # Could not get an http response, something's wrong.
       elsif response.code == 0
         @logger.error { "Could not get an http response : #{response.return_message} in #{method} for #{request.inspect}" }
-         @report_method.call("ApiError", "Request :: #{request.inspect} in #{method}", "Failed to get response :: #{response.return_message}")
+        @report_method.call("RestError", "Request :: #{request.inspect} in #{method}", "Failed to get response :: #{response.return_message}")
         reply_with(:HttpError, raise_on_error)
+
         # Received a non-successful http response.
       else
         @logger.error { "HTTP request failed in #{method}: #{response.code} for request #{request.inspect}" }
-         @report_method.call("ApiError", "Request :: #{request.inspect} in #{method}", "#{response.code}")
+        @report_method.call("RestError", "Request :: #{request.inspect} in #{method}", "#{response.code}")
         reply_with(:BadReturnCode, raise_on_error)
       end
     end
@@ -105,13 +91,13 @@ class RestfullClient
     end
   rescue Exception => e
     res = ServiceJynx.failure!(caller)
-     @report_method.call("ServiceJynx", "Service #{caller} was taken down as a result of exception", e.message) if res == :WENT_DOWN
-    on_error_block.call("Exception in #{caller}_service exceution - #{e.message}") if on_error_block
+    @report_method.call("ServiceJynx", "Service #{caller} was taken down as a result of exception", e.message) if res == :WENT_DOWN
+    on_error_block.call("Exception in #{caller}_service execution - #{e.message}") if on_error_block
   end
 
   def reply_with(symbol, raise_on_error)
     if raise_on_error
-      raise ApiError.new(symbol)
+      raise RestError.new(symbol)
     else
       return symbol
     end
