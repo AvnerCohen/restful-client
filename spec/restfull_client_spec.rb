@@ -19,7 +19,7 @@ describe :RestfullClient do
 
   it "should correctly read configuration files" do
     RestfullClient.configure do |config|
-      config.file_name = "spec/config/services.yml"
+      config.config_folder = "spec/config"
     end
 
     RestfullClient.configuration.data.should_not be(nil)
@@ -27,25 +27,25 @@ describe :RestfullClient do
 
   it "should allow accesing url configuration" do
     RestfullClient.configure do |config|
-      config.file_name = "spec/config/services.yml"
+      config.config_folder = "spec/config"
     end
 
     RestfullClient.configuration.data["posts"]["url"].should eq("http://1.2.3.4:8383/api/v1/")
   end
 
   it "should allow accesing url configuration by environment" do
-    ENV["RACK_ENV"] = "production"
     RestfullClient.configure do |config|
-      config.file_name = "spec/config/services.yml"
+      config.env_name = "production"
+      config.config_folder = "spec/config"
     end
 
     RestfullClient.configuration.data["posts"]["url"].should eq("http://1.2.3.4:8383/api/v0/")
   end
 
   it "should have a logger" do
-    ENV["RACK_ENV"] = "production"
     RestfullClient.configure do |config|
-      config.file_name = "spec/config/services.yml"
+      config.env_name = "production"
+      config.config_folder = "spec/config"
     end
 
     RestfullClient.logger.should respond_to :info
@@ -53,16 +53,16 @@ describe :RestfullClient do
 
   it "should correctly read the configuration from the registry" do
     RestfullClient.configure do |config|
-      config.file_name = "spec/config/services.yml"
+      config.config_folder = "spec/config"
     end
 
     RestfullClient.callerr_config("posts")["url"].should eq("http://1.2.3.4:8383/api/v0/")
   end
 
   it "should allow sending in a reporting method (such as graylog/ airbrake instrumentiation" do
-    ENV["RACK_ENV"] = "production"
     RestfullClient.configure do |config|
-      config.file_name = "spec/config/services.yml"
+      config.env_name = "production"
+      config.config_folder = "spec/config"
       config.report_method = proc {|*args| @@some_global = *args }
     end
     RestfullClient.configuration.report_on

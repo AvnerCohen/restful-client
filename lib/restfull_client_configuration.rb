@@ -1,8 +1,9 @@
 class RestfullClientConfiguration
-  attr_accessor :file_name, :report_method, :data
+  attr_accessor :config_folder, :report_method, :data, :env_name
 
   def run!
-    raise "Configuration File Name must be provided" unless file_name.class.to_s == "String"
+    raise "Configuration directory name must be provided" unless config_folder.class.to_s == "String"
+    file_name = File.join(config_folder, "restfull_services.yml")
     @data = YAML.load(ERB.new(File.read(file_name)).result)[env].each do |name, entry|
       next unless entry.has_key?("url")
       opts = {
@@ -22,7 +23,7 @@ class RestfullClientConfiguration
   end
 
   def env
-    (defined?(Rails) && Rails.env) || ENV["RAILS_ENV"] || ENV["RACK_ENV"] || "default"
+    @env_name || "default"
   end
 
 end
