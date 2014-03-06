@@ -83,7 +83,7 @@ end
 
 ## Forward IP of client
 In a complex micro services environment, when services are chained together, you might need to pass along the original IP of the client.
-Implementaion is based on a global $client_ip that can be set and will be assigned to the "X-Forwarded-For" http header.
+Implementation is based on a global $client_ip that can be set and will be assigned to the "X-Forwarded-For" http header.
 So yeah, no JRuby support at this time.
 
 
