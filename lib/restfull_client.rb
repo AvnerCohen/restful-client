@@ -22,19 +22,19 @@ module RestfullClient
 
   def get(caller, path, params = {}, &on_error_block)
     url = URI::join(callerr_config(caller)["url"], path).to_s
-    request = Typhoeus::Request.new(url, headers: { "Accept" => "text/json" }, method: 'GET', timeout: 3, params: params)
+    request = Typhoeus::Request.new(url, headers: { "Accept" => "text/json" }, method: 'GET', timeout: timeout, params: params)
     run_safe_request(caller, request, &on_error_block)
   end
 
   def post(caller, path, payload, &on_error_block)
     url = URI::join(callerr_config(caller)["url"], path).to_s
-    request = Typhoeus::Request.new(url, method: 'POST', body: payload, timeout: 300)
+    request = Typhoeus::Request.new(url, method: 'POST', body: payload, timeout: timeout)
     run_safe_request(caller, request, &on_error_block)
   end
 
   def delete(caller, path, &on_error_block)
     url = URI::join(callerr_config(caller)["url"], path).to_s
-    request = Typhoeus::Request.new(url, method: 'DELETE', timeout: 300)
+    request = Typhoeus::Request.new(url, method: 'DELETE', timeout: timeout)
     run_safe_request(caller, request, &on_error_block)
   end
 
@@ -46,6 +46,10 @@ module RestfullClient
 
   def callerr_config(caller)
     configuration.data[caller]
+  end
+
+  def timeout
+    configuration.timeout
   end
 
   def run_request(request, method, raise_on_error = false)

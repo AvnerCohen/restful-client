@@ -59,6 +59,24 @@ describe :RestfullClient do
     RestfullClient.callerr_config("posts")["url"].should eq("http://1.2.3.4:8383/api/v0/")
   end
 
+  it "should have a timeout defined for the service by default" do
+    RestfullClient.configure do |config|
+      config.config_folder = "spec/config"
+    end
+
+    RestfullClient.timeout.should eq(10)
+  end
+
+  it "should have a timeout defined for the service by default" do
+    RestfullClient.configure do |config|
+      config.config_folder = "spec/config"
+      config.timeout = 15
+    end
+
+    RestfullClient.timeout.should eq(15)
+  end
+
+
   it "should allow sending in a reporting method (such as graylog/ airbrake instrumentiation" do
     RestfullClient.configure do |config|
       config.env_name = "production"
