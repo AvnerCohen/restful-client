@@ -13,6 +13,7 @@ An HTTP framework for micro-services based environment, build on top of [typhoeu
 * Allows setting defaults for case of errors and SERVICE_DOWN event from Jynx
 * Strcutured and configurable YAML for multiple service end points
 * Build with Typheous, a fast and robuts http client, built on top of libcurl
+* Configurable timeout for the http request
 
 ## Configuration
 
@@ -66,6 +67,18 @@ Consider the following example:
         #proc hock to the reporting method
         config.report_method = proc {|*args| report_to_graylog(*args) }
       end
+</pre>
+
+
+Default timeout for a call is set to 10 seconds, if you want to configure anything different:
+<pre>
+
+      RestfullClient.configure do |config|
+        config.env_name = Rails.env
+        config.config_folder = "#{Rails.root}/config"
+        config.timeout = 5
+      end  
+
 </pre>
 
 Than use the service:
