@@ -3,6 +3,7 @@ require 'typhoeus'
 require 'service_jynx'
 require 'restfull_client_configuration'
 require 'restfull_client_logger'
+require 'restfull_client_uri'
 
 module RestfullClient
   extend self
