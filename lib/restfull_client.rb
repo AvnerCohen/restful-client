@@ -1,4 +1,3 @@
-require 'uri'
 require 'yaml'
 require 'typhoeus'
 require 'service_jynx'
@@ -21,25 +20,25 @@ module RestfullClient
 
 
   def get(caller, path, params = {}, &on_error_block)
-    url = URI::join(callerr_config(caller)["url"], path).to_s
+    url = RestfullClientUri.uri_join(callerr_config(caller)["url"], path)
     request = Typhoeus::Request.new(url, headers: { "Accept" => "text/json" }, method: 'GET', timeout: timeout, params: params)
     run_safe_request(caller, request, &on_error_block)
   end
 
   def post(caller, path, payload, &on_error_block)
-    url = URI::join(callerr_config(caller)["url"], path).to_s
+    url = RestfullClientUri.uri_join(callerr_config(caller)["url"], path)
     request = Typhoeus::Request.new(url, method: 'POST', body: payload, timeout: timeout)
     run_safe_request(caller, request, &on_error_block)
   end
 
   def delete(caller, path, &on_error_block)
-    url = URI::join(callerr_config(caller)["url"], path).to_s
+    url = RestfullClientUri.uri_join(callerr_config(caller)["url"], path)
     request = Typhoeus::Request.new(url, method: 'DELETE', timeout: timeout)
     run_safe_request(caller, request, &on_error_block)
   end
 
   def put(caller, path, payload, &on_error_block)
-    url = URI::join(callerr_config(caller)["url"], path).to_s
+    url = RestfullClientUri.uri_join(callerr_config(caller)["url"], path)
     request = Typhoeus::Request.new(url, headers: { "Content-Type" => "application/json" }, method: 'PUT', body: payload.to_json(root: false), timeout: 3)
     run_safe_request(caller, request, &on_error_block)
   end

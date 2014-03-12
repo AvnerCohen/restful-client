@@ -102,7 +102,31 @@ describe :RestfullClient do
     RestfullClient.get("posts", "/a/a/a/a") { nil }
 
     $some_global.should eq("RestError")
-  end  
+  end
+
+  describe "Uri Joining" do
+
+    it "should correct join two paths leading slash defined as [WithSlash : NoSlash]" do
+      path = RestfullClientUri.uri_join("http://load-balancer-int01:9999/api/v1/", "proposals/sent/count/123")
+      path.should eq("http://load-balancer-int01:9999/api/v1/proposals/sent/count/123")
+    end
+
+    it "should correct join two paths leading slash defined as [WithSlash : WithSlash]" do
+      path = RestfullClientUri.uri_join("http://load-balancer-int01:9999/api/v1/", "/proposals/sent/count/123")
+      path.should eq("http://load-balancer-int01:9999/api/v1/proposals/sent/count/123")
+    end
+
+    it "should correct join two paths leading slash defined as [NoSlash : WithSlash]" do
+      path = RestfullClientUri.uri_join("http://load-balancer-int01:9999/api/v1", "/proposals/sent/count/123")
+      path.should eq("http://load-balancer-int01:9999/api/v1/proposals/sent/count/123")
+    end
+
+    it "should correct join two paths leading slash defined as [NoSlash : NowSlash]" do
+      path = RestfullClientUri.uri_join("http://load-balancer-int01:9999/api/v1", "proposals/sent/count/123")
+      path.should eq("http://load-balancer-int01:9999/api/v1/proposals/sent/count/123")
+    end
+
+  end
 
 end
 
