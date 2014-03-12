@@ -3,13 +3,13 @@ require 'spec_helper'
 require 'pry'
 require 'pry-debugger'
 
-def reporting_method(*args)
-  @@some_global = *args
+def set_global(class_name)
+  $some_global = class_name
 end
 
 describe :RestfullClient do
-  before(:all) do
-    @@some_global = nil
+  before(:each) do
+    $some_global = nil
     Typhoeus::Expectation.clear
   end
 
@@ -76,17 +76,33 @@ describe :RestfullClient do
     RestfullClient.timeout.should eq(15)
   end
 
-
-  it "should allow sending in a reporting method (such as graylog/ airbrake instrumentiation" do
+  it "should allow sending in a reporting method (such as graylog/ airbrake instrumentiation)" do
     RestfullClient.configure do |config|
       config.env_name = "production"
       config.config_folder = "spec/config"
-      config.report_method = proc {|*args| @@some_global = *args }
+      config.report_method = proc do |*args|
+        klass, message = *args
+        set_global(klass)
+      end
     end
     RestfullClient.configuration.report_on
 
-    @@some_global.should_not be(nil)
+    $some_global.should eq("RestfullClientConfiguration")
   end
+
+  it "should report on a server error (end-2-end ish test)" do
+    RestfullClient.configure do |config|
+      config.env_name = "production"
+      config.config_folder = "spec/config"
+      config.report_method = proc do |*args|
+        klass, message = *args
+        set_global(klass)
+      end
+    end
+    RestfullClient.get("posts", "/a/a/a/a") { nil }
+
+    $some_global.should eq("RestError")
+  end  
 
 end
 

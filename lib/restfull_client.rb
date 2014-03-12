@@ -10,7 +10,7 @@ module RestfullClient
 
   class RestError < StandardError; end
 
-  attr_accessor :configuration, :logger, :report_method, :env
+  attr_accessor :configuration, :logger, :env
 
   def self.configure
     self.configuration ||= RestfullClientConfiguration.new
@@ -52,6 +52,10 @@ module RestfullClient
     configuration.timeout
   end
 
+  def report_method
+    configuration.report_method
+  end
+
   def run_request(request, method, raise_on_error = false)
     @logger.debug { "#{__method__} :: Request :: #{request.inspect}" }
     request.options[:headers].merge!({'X-Forwarded-For' => $client_ip}) if $client_ip
@@ -65,19 +69,19 @@ module RestfullClient
         #Timeout occured
       elsif response.timed_out?
         @logger.error { "Got a time out in #{method} for #{request.inspect}" }
-        @report_method.call("RestError", "Request :: #{request.inspect} in #{method}", "timeout")
+        report_method.call("RestError", "Request :: #{request.inspect} in #{method}", "timeout")
         reply_with(:TimeoutOccured, raise_on_error)
 
         # Could not get an http response, something's wrong.
       elsif response.code == 0
         @logger.error { "Could not get an http response : #{response.return_message} in #{method} for #{request.inspect}" }
-        @report_method.call("RestError", "Request :: #{request.inspect} in #{method}", "Failed to get response :: #{response.return_message}")
+        report_method.call("RestError", "Request :: #{request.inspect} in #{method}", "Failed to get response :: #{response.return_message}")
         reply_with(:HttpError, raise_on_error)
 
         # Received a non-successful http response.
       else
         @logger.error { "HTTP request failed in #{method}: #{response.code} for request #{request.inspect}" }
-        @report_method.call("RestError", "Request :: #{request.inspect} in #{method}", "#{response.code}")
+        report_method.call("RestError", "Request :: #{request.inspect} in #{method}", "#{response.code}")
         reply_with(:BadReturnCode, raise_on_error)
       end
     end
@@ -95,7 +99,7 @@ module RestfullClient
     end
   rescue => e
     res = ServiceJynx.failure!(caller)
-    @report_method.call("ServiceJynx", "Service #{caller} was taken down as a result of exception", e.message) if res == :WENT_DOWN
+    report_method.call("ServiceJynx", "Service #{caller} was taken down as a result of exception", e.message) if res == :WENT_DOWN
     on_error_block.call("Exception in #{caller}_service execution - #{e.message}") if on_error_block
   end
 

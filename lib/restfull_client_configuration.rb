@@ -24,8 +24,9 @@ class RestfullClientConfiguration
     end
   end
 
+  ## Dummy method to test reporting phase
   def report_on
-    @report_method.call("Initialized at: #{Time.now}.")
+    @report_method.call("RestfullClientConfiguration", "Initialized at: #{Time.now}.")
   end
 
   def env
