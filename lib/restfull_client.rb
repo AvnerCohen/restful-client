@@ -45,7 +45,9 @@ module RestfullClient
   end
 
   def callerr_config(caller)
-    configuration.data[caller]
+    caller_setup = configuration.data[caller]
+    raise "Couldn't find >>#{caller}<< in the configuration YAML !!" unless caller_setup
+    caller_setup
   end
 
   def timeout
