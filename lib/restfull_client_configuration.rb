@@ -1,3 +1,5 @@
+require 'erb'
+
 class RestfullClientConfiguration
   attr_accessor :config_folder, :report_method, :data, :env_name, :timeout
   DEFAULT_TIMEOUT = 10
