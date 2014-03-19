@@ -2,7 +2,7 @@ module RestfullClientLogger
   extend self
 
   def logger
-    @logger ||= (rails_logger || default_logger)
+    @logger ||= (rails_logger || $log || default_logger)
   end
 
   def rails_logger
