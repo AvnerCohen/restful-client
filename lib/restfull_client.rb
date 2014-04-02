@@ -40,7 +40,7 @@ module RestfullClient
 
   def put(caller, path, payload, &on_error_block)
     url = RestfullClientUri.uri_join(callerr_config(caller)["url"], path)
-    request = Typhoeus::Request.new(url, headers: { "Content-Type" => "application/json" }, method: 'PUT', body: payload.to_json(root: false), timeout: 3)
+    request = Typhoeus::Request.new(url, headers: { "Content-Type" => "application/json" }, method: 'PUT', body: payload.to_json(root: false), timeout: timeout)
     run_safe_request(caller, request, &on_error_block)
   end
 
