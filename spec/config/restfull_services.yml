@@ -3,6 +3,8 @@ default: &default
     url: http://1.2.3.4:7711/api/v1/
   posts:
     url: http://1.2.3.4:8383/api/v1/
+  locally:
+    url: http://localhost:8383/api/v1/
 
 development: &development
 <<: *default
@@ -12,3 +14,5 @@ production: &production
     url: http://1.2.3.4:7711/api/v0/
   posts:
     url: http://1.2.3.4:8383/api/v0/
+  locally:
+    url: http://localhost:8383/api/v0/

@@ -1,8 +1,9 @@
 require 'erb'
 
 class RestfullClientConfiguration
-  attr_accessor :config_folder, :report_method, :data, :env_name, :timeout
+  attr_accessor :config_folder, :report_method, :data, :env_name, :timeout, :retries
   DEFAULT_TIMEOUT = 10
+  DEFAULT_RETRIES = 2
 
   def run!
     raise "Configuration directory name must be provided" unless config_folder.class.to_s == "String"
@@ -23,6 +24,9 @@ class RestfullClientConfiguration
     end
     unless @timeout
       @timeout = DEFAULT_TIMEOUT
+    end
+    unless @retries
+      @retries = DEFAULT_RETRIES
     end
   end
 
