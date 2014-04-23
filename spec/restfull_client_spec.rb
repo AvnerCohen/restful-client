@@ -112,7 +112,6 @@ describe :RestfullClient do
     it "automatically run to_json on an object" do
       RestfullClient.configure do |config|
         config.env_name = "production"
-        config.timeout = 200
         config.config_folder = "spec/config"
       end
 
@@ -125,7 +124,6 @@ describe :RestfullClient do
     it "doesn't re-run json on data that was already a json object" do
       RestfullClient.configure do |config|
         config.env_name = "production"
-        config.timeout = 200
         config.config_folder = "spec/config"
       end
 

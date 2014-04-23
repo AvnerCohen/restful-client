@@ -33,7 +33,7 @@ module RestfullClient
     headers = {}
     if payload.is_a?(String)
       payload_as_str = payload
-    else
+    elsif payload.is_a?(Hash)
       payload_as_str = payload.to_json(root: false)
       headers.merge!({ "Content-Type" => "application/json" })
     end
@@ -52,7 +52,7 @@ module RestfullClient
     headers = {}
     if payload.is_a?(String)
       payload_as_str = payload
-    else
+    elsif payload.is_a?(Hash)
       payload_as_str = payload.to_json(root: false)
       headers.merge!({ "Content-Type" => "application/json" })
     end
