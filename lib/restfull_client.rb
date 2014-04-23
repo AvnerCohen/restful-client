@@ -36,6 +36,8 @@ module RestfullClient
     elsif payload.is_a?(Hash)
       payload_as_str = payload.to_json(root: false)
       headers.merge!({ "Content-Type" => "application/json" })
+    else
+      payload_as_str
     end
     request = Typhoeus::Request.new(url, headers: headers, method: 'POST', body: payload_as_str, timeout: timeout)
     run_safe_request(caller, request, false, &on_error_block)
@@ -55,6 +57,8 @@ module RestfullClient
     elsif payload.is_a?(Hash)
       payload_as_str = payload.to_json(root: false)
       headers.merge!({ "Content-Type" => "application/json" })
+    else
+      payload_as_str
     end
     request = Typhoeus::Request.new(url, headers: headers, method: 'PUT', body: payload_as_str, timeout: timeout)
     run_safe_request(caller, request, false, &on_error_block)
