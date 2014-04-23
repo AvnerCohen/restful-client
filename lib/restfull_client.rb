@@ -43,7 +43,7 @@ module RestfullClient
 
   def post_raw(caller, path, payload, &on_error_block)
     url = RestfullClientUri.uri_join(callerr_config(caller)["url"], path)
-    request = Typhoeus::Request.new(url, headers: headers, method: 'POST', body: payload, timeout: timeout)
+    request = Typhoeus::Request.new(url, method: 'POST', body: payload, timeout: timeout)
     run_safe_request(caller, request, false, &on_error_block)
   end
 
