@@ -13,6 +13,8 @@ module MyApp
           @@counter = @@counter+1
           sleep 3
           [ 500, {"Content-Type" => "application/json"}, {counter: @@counter}.to_json ]
+        elsif path == "/api/v0/bounce"
+          [ 200, {'Content-Type' => 'text/plain'}, env['rack.input'].gets ]
         else
           [ 200, {'Content-Type' => 'text/plain'}, {counter: @@counter}.to_json ]
         end
