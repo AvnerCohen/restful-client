@@ -31,15 +31,19 @@ module RestfullClient
   def post(caller, path, payload, &on_error_block)
     url = RestfullClientUri.uri_join(callerr_config(caller)["url"], path)
     headers = {}
-    if payload.is_a?(String)
-      payload_as_str = payload
-    elsif payload.is_a?(Hash)
+    if payload.is_a?(Hash)
       payload_as_str = payload.to_json(root: false)
       headers.merge!({ "Content-Type" => "application/json" })
     else
-      payload_as_str
+      payload_as_str = payload
     end
     request = Typhoeus::Request.new(url, headers: headers, method: 'POST', body: payload_as_str, timeout: timeout)
+    run_safe_request(caller, request, false, &on_error_block)
+  end
+
+  def post_raw(caller, path, payload, &on_error_block)
+    url = RestfullClientUri.uri_join(callerr_config(caller)["url"], path)
+    request = Typhoeus::Request.new(url, headers: headers, method: 'POST', body: payload, timeout: timeout)
     run_safe_request(caller, request, false, &on_error_block)
   end
 
@@ -52,13 +56,11 @@ module RestfullClient
   def put(caller, path, payload, &on_error_block)
     url = RestfullClientUri.uri_join(callerr_config(caller)["url"], path)
     headers = {}
-    if payload.is_a?(String)
-      payload_as_str = payload
-    elsif payload.is_a?(Hash)
+    if payload.is_a?(Hash)
       payload_as_str = payload.to_json(root: false)
       headers.merge!({ "Content-Type" => "application/json" })
     else
-      payload_as_str
+      payload_as_str = payload
     end
     request = Typhoeus::Request.new(url, headers: headers, method: 'PUT', body: payload_as_str, timeout: timeout)
     run_safe_request(caller, request, false, &on_error_block)
