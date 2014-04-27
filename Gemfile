@@ -1,12 +1,9 @@
 source 'https://rubygems.org'
 
-gem "thin"
+gem 'thin', '~> 1.6.3'
 
-group :test do
-  gem 'pry-remote'
-  gem 'pry-stack_explorer'
-  gem 'pry-debugger'
-  gem 'rspec'
-end
+gem 'pry-byebug', '~> 2.0.0'
+gem 'rspec', '~> 3.1.0'
+gem 'rspec-its', '~> 1.1.0'
 
 gemspec

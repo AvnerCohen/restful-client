@@ -1,19 +1,18 @@
-# RestfullClient  -- IN PROGRESS
+# RestfullClient
 
 An HTTP framework for micro-services based environment, build on top of [typhoeus](https://github.com/typhoeus/typhoeus) and [servicejynx](https://github.com/AvnerCohen/service-jynx)
 
 ## Installation
 
-
-    gem 'RestfullClient'
+    gem 'restfull_client'
 
 ## Features
 
 * Clean restfull api supporting http verbs (GET/PUT/POST/DELETE)
-* Allows setting defaults for case of errors and SERVICE_DOWN event from Jynx
+* Manage Failures -  set stubs for case of errors and SERVICE_DOWN event from [Jynx](https://github.com/AvnerCohen/service-jynx)
 * Strcutured and configurable YAML for multiple service end points
-* Build with Typheous, a fast and robuts http client, built on top of libcurl
-* Configurable timeout for the http request
+* Build using Typheous, a fast and robuts http client, built on top of libcurl
+* Configurable timeouts for http request
 
 ## Configuration
 
@@ -36,6 +35,15 @@ production: &production
     grace_period: 60    
 
 </pre>
+
+### Possible flags
+
+* use_jynx - Remove the integrated jynx-service protection (default: false)
+* report_method - proc to be executed in the case of error
+* env_name - environment name (production|staging|development etc..)
+* config_folder - path to the configuration folder of the restfull_services.yml file.
+* user_agent - user agent... duh! (users_service|mobile_service|etc..)
+* legacy_postfix - Legacy version accessed the restfull_services.yml with an additional postfix in the yaml.
 
 ## Usage
 
@@ -64,6 +72,7 @@ Consider the following example:
       RestfullClient.configure do |config|
         config.env_name = ENV['RACK_ENV']
         config.config_folder = "config"
+        config.user_agent = "my_service"
         #proc hock to the reporting method
         config.report_method = proc {|*args| report_to_graylog(*args) }
       end
@@ -99,6 +108,21 @@ In a complex micro services environment, when services are chained together, you
 Implementation is based on a global $client_ip that can be set and will be assigned to the "X-Forwarded-For" http header.
 So yeah, no JRuby support at this time.
 
+
+## Reusing configuration
+In some cases you might need to use, join or read the base URL of a given service:
+
+
+Given:
+
+````
+  users:
+    url: http://1.2.3.4:8383/api/v0/
+````
+<pre>
+
+  RestfullClient.srv_url('posts') # ==> http://1.2.3.4:8383/api/v0/
+</pre>
 
 ## Contributing
 

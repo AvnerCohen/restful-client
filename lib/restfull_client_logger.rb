@@ -1,5 +1,5 @@
 module RestfullClientLogger
-  extend self
+  module_function
 
   def logger
     @logger ||= (rails_logger || $log || default_logger)

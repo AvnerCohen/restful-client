@@ -1,4 +1,4 @@
 --color
 --drb
---format nested
+--format documentation
 --require spec_helper
