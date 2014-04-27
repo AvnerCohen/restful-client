@@ -87,7 +87,7 @@ module RestfullClient
     response
   rescue => e
     res = ServiceJynx.failure!(caller)
-    report_method.call("ServiceJynx", "Service #{caller} was taken down as a result of exception", e.message) if res == :WENT_DOWN
+    report_method.call("ServiceJynx", "Service #{caller} was taken down as a result of exception", e) if res == :WENT_DOWN
     on_error_block.call("Exception in #{caller}_service execution - #{e.message}") if on_error_block
   end
 
@@ -105,17 +105,21 @@ module RestfullClient
         @@timeout_occured_count = @@timeout_occured_count + 1
         skip_raise = (retry_if_needed && @@timeout_occured_count <= retries)
         @logger.error { "Got a time out in #{method} for #{request.inspect}" }
-        report_method.call("RestError", "Request :: #{request.inspect} in #{method}", "timeout")
+        exception = Exception.new("TimeoutOccured: in #{method}, Message: #{response.code}.")
+        exception.set_backtrace(caller)        
+        report_method.call("RestError", "Request :: #{request.inspect} in #{method} without a timeout.", exception)
         raise RestError.new(:TimeoutOccured) unless skip_raise
         # Could not get an http response, something's wrong.
       elsif response.code == 0
         @logger.error { "Could not get an http response : #{response.return_message} in #{method} for #{request.inspect}" }
-        report_method.call("RestError", "Request :: #{request.inspect} in #{method}", "Failed to get response :: #{response.return_message}")
+        exception = Exception.new("HttpError: in #{method}, Message: #{response.code}.")
+        exception.set_backtrace(caller)        
+        report_method.call("RestError", "Request :: #{request.inspect}", exception)
         raise RestError.new(:HttpError)
         # Received a non-successful http response.
       else
         @logger.error { "HTTP request failed in #{method}: #{response.code} for request #{request.inspect}" }
-        exception = Exception.new("RestError: in #{method}, Message: #{response.code}.")
+        exception = Exception.new("BadReturnCode: in #{method}, Message: #{response.code}.")
         exception.set_backtrace(caller)
         report_method.call("RestError", "Request :: #{request.inspect} ", exception)
         raise RestError.new(:BadReturnCode)
