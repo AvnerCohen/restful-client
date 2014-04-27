@@ -115,7 +115,9 @@ module RestfullClient
         # Received a non-successful http response.
       else
         @logger.error { "HTTP request failed in #{method}: #{response.code} for request #{request.inspect}" }
-        report_method.call("RestError", "Request :: #{request.inspect} in #{method}", "#{response.code}")
+        exception = Exception.new("RestError: in #{method}, Message: #{response.code}.")
+        exception.set_backtrace(caller)
+        report_method.call("RestError", "Request :: #{request.inspect} ", exception)
         raise RestError.new(:BadReturnCode)
       end
     end
