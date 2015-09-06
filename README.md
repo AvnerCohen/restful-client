@@ -2,6 +2,8 @@
 
 An HTTP framework for micro-services based environment, build on top of [typhoeus](https://github.com/typhoeus/typhoeus) and [servicejynx](https://github.com/AvnerCohen/service-jynx)
 
+[![Build status](https://travis-ci.org/AvnerCohen/restful-client.png)](https://travis-ci.org/AvnerCohen/restful-client)
+
 ## Installation
 
     gem 'restful_client'
