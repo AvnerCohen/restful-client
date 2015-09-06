@@ -1,4 +1,4 @@
-module RestfullClientLogger
+module RestfulClientLogger
   module_function
 
   def logger

@@ -1,14 +1,14 @@
 require 'erb'
 
-class RestfullClientConfiguration
+class RestfulClientConfiguration
   attr_accessor :config_folder, :report_method, :data, :env_name, :timeout, :user_agent, :retries, :use_jynx, :legacy_postfix
   DEFAULT_TIMEOUT = 10
   DEFAULT_RETRIES = 2
-  DEFAULT_USER_AGENT = 'RestfullClient - https://github.com/fiverr/restfull-client'
+  DEFAULT_USER_AGENT = 'RestfulClient - https://github.com/AvnerCohen/restful-client'
 
   def run!
     raise "Configuration directory name must be provided" unless config_folder.class.to_s == "String"
-    file_name = ["restfull_services.yml", "rest_api.yml"].each do |name|
+    file_name = ["restful_services.yml", "rest_api.yml"].each do |name|
       locale_name = File.join(config_folder, name)
       break locale_name if File.file?(locale_name)
     end
@@ -45,7 +45,7 @@ class RestfullClientConfiguration
 
   ## Dummy method to test reporting phase
   def report_on
-    @report_method.call("RestfullClientConfiguration", "Initialized at: #{Time.now}.")
+    @report_method.call("RestfulClientConfiguration", "Initialized at: #{Time.now}.")
   end
 
   def env

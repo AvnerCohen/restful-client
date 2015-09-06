@@ -1,6 +1,6 @@
 require 'uri'
 
-module RestfullClientUri
+module RestfulClientUri
   module_function
 
   ## This is totally wierd, but File.join just does what you need while URI.join as much too strict.

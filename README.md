@@ -1,14 +1,14 @@
-# RestfullClient
+# RestfulClient
 
 An HTTP framework for micro-services based environment, build on top of [typhoeus](https://github.com/typhoeus/typhoeus) and [servicejynx](https://github.com/AvnerCohen/service-jynx)
 
 ## Installation
 
-    gem 'restfull_client'
+    gem 'restful_client'
 
 ## Features
 
-* Clean restfull api supporting http verbs (GET/PUT/POST/DELETE)
+* Clean restful api supporting http verbs (GET/PUT/POST/DELETE)
 * Manage Failures -  set stubs for case of errors and SERVICE_DOWN event from [Jynx](https://github.com/AvnerCohen/service-jynx)
 * Strcutured and configurable YAML for multiple service end points
 * Build using Typheous, a fast and robuts http client, built on top of libcurl
@@ -16,7 +16,7 @@ An HTTP framework for micro-services based environment, build on top of [typhoeu
 
 ## Configuration
 
-Create the "restfull_services.yml" file in your config folder.
+Create the "restful_services.yml" file in your config folder.
 Configuration for the various service is based on top of YAML that configures the http service endpoints and ServiceJynx setup:
 
 <pre>
@@ -41,22 +41,22 @@ production: &production
 * use_jynx - Remove the integrated jynx-service protection (default: false)
 * report_method - proc to be executed in the case of error
 * env_name - environment name (production|staging|development etc..)
-* config_folder - path to the configuration folder of the restfull_services.yml file.
+* config_folder - path to the configuration folder of the restful_services.yml file.
 * user_agent - user agent... duh! (users_service|mobile_service|etc..)
-* legacy_postfix - Legacy version accessed the restfull_services.yml with an additional postfix in the yaml.
+* legacy_postfix - Legacy version accessed the restful_services.yml with an additional postfix in the yaml.
 
 ## Usage
 
 In your environment initializer:
 
 <pre>
-      RestfullClient.configure do |config|
+      RestfulClient.configure do |config|
         config.env_name = Rails.env
         config.config_folder = "config"
       end
 </pre>
 
-When an error occurs, restfull client will report it, as part of the configuration, you an provide it with a reporting hook service, such as graylog or airbrake or whatever you want.
+When an error occurs, restful client will report it, as part of the configuration, you an provide it with a reporting hook service, such as graylog or airbrake or whatever you want.
 
 Data from the report_method will be reported as ```func(klass_name, message, Exception)```
 
@@ -69,7 +69,7 @@ Consider the following example:
         $gelf_notifier.send_to_graylog2(e)
       end
 
-      RestfullClient.configure do |config|
+      RestfulClient.configure do |config|
         config.env_name = ENV['RACK_ENV']
         config.config_folder = "config"
         config.user_agent = "my_service"
@@ -82,7 +82,7 @@ Consider the following example:
 Default timeout for a call is set to 10 seconds, if you want to configure anything different:
 <pre>
 
-      RestfullClient.configure do |config|
+      RestfulClient.configure do |config|
         config.env_name = Rails.env
         config.config_folder = "#{Rails.root}/config"
         config.timeout = 5
@@ -93,12 +93,12 @@ Default timeout for a call is set to 10 seconds, if you want to configure anythi
 Than use the service:
 
 <pre>
-RestfullClient.get("posts", "/comments/#{user.id}") do
+RestfulClient.get("posts", "/comments/#{user.id}") do
  [] #default value to be returned on failure
 end
 
 #or
-RestfullClient.delete("posts", {comments: [1,2,4]}, "/comments/#{some_id}") do
+RestfulClient.delete("posts", {comments: [1,2,4]}, "/comments/#{some_id}") do
  "ok" #default value to be returned on failure
 end
 </pre>
@@ -121,7 +121,7 @@ Given:
 ````
 <pre>
 
-  RestfullClient.srv_url('posts') # ==> http://1.2.3.4:8383/api/v0/
+  RestfulClient.srv_url('posts') # ==> http://1.2.3.4:8383/api/v0/
 </pre>
 
 ## Contributing

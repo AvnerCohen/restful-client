@@ -2,11 +2,11 @@ require 'yaml'
 require 'typhoeus'
 require 'service_jynx'
 require 'json'
-require_relative './restfull_client_configuration.rb'
-require_relative './restfull_client_logger.rb'
-require_relative './restfull_client_uri.rb'
+require_relative './restful_client_configuration.rb'
+require_relative './restful_client_logger.rb'
+require_relative './restful_client_uri.rb'
 
-module RestfullClient
+module RestfulClient
   module_function
 
   class RestError < StandardError; end
@@ -18,10 +18,10 @@ module RestfullClient
   SERVER_SIDE_ERRORS_RANGE = 500
 
   def self.configure
-    @@configuration ||= RestfullClientConfiguration.new
+    @@configuration ||= RestfulClientConfiguration.new
     yield(configuration)
     @@configuration.run!
-    @@logger = RestfullClientLogger.logger
+    @@logger = RestfulClientLogger.logger
   end
 
   def configuration
@@ -37,7 +37,7 @@ module RestfullClient
   end
 
   def get(caller, path, params = {}, extra_options = {}, &on_error_block)
-    url = RestfullClientUri.uri_join(callerr_config(caller)["url"], path)
+    url = RestfulClientUri.uri_join(callerr_config(caller)["url"], path)
     headers = { "Accept" => "text/json" }
     headers.merge!(extra_options.fetch("headers", {}))
     request = Typhoeus::Request.new(url, headers: headers, method: 'GET', timeout: timeout, params: params)
@@ -45,27 +45,27 @@ module RestfullClient
   end
 
   def post(caller, path, payload, extra_options = {}, &on_error_block)
-    url = RestfullClientUri.uri_join(callerr_config(caller)["url"], path)
+    url = RestfulClientUri.uri_join(callerr_config(caller)["url"], path)
     headers, payload_as_str = prepare_payload_with_headers(payload, extra_options.fetch("headers", {}))
     request = Typhoeus::Request.new(url, headers: headers, method: 'POST', body: payload_as_str, timeout: timeout)
     run_safe_request(caller, request, false, &on_error_block)
   end
 
   def post_raw(caller, path, payload, custom_timeout = timeout, &on_error_block)
-    url = RestfullClientUri.uri_join(callerr_config(caller)["url"], path)
+    url = RestfulClientUri.uri_join(callerr_config(caller)["url"], path)
     request = Typhoeus::Request.new(url, method: 'POST', body: payload, timeout: custom_timeout)
     run_safe_request(caller, request, false, &on_error_block)
   end
 
   def delete(caller, path, payload = {}, extra_options = {}, &on_error_block)
-    url = RestfullClientUri.uri_join(callerr_config(caller)["url"], path)
+    url = RestfulClientUri.uri_join(callerr_config(caller)["url"], path)
     headers, payload_as_str = prepare_payload_with_headers(payload, extra_options.fetch("headers", {}))
     request = Typhoeus::Request.new(url, headers: headers, method: 'DELETE', body: payload_as_str, timeout: timeout)
     run_safe_request(caller, request, true, &on_error_block)
   end
 
   def put(caller, path, payload, extra_options = {}, &on_error_block)
-    url = RestfullClientUri.uri_join(callerr_config(caller)["url"], path)
+    url = RestfulClientUri.uri_join(callerr_config(caller)["url"], path)
     headers, payload_as_str = prepare_payload_with_headers(payload, extra_options.fetch("headers", {}))
     request = Typhoeus::Request.new(url, headers: headers, method: 'PUT', body: payload_as_str, timeout: timeout)
     run_safe_request(caller, request, false, &on_error_block)
@@ -175,7 +175,7 @@ module RestfullClient
   end
 
   def fake(caller, path, options = {}, &block)
-    url = RestfullClientUri.uri_join(callerr_config(caller)["url"], path)
+    url = RestfulClientUri.uri_join(callerr_config(caller)["url"], path)
     Typhoeus.stub(url, options = {}, &block)
   end
 
