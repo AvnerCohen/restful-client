@@ -38,14 +38,14 @@ production: &production
 
 </pre>
 
-### Possible flags
+### Configuration Flags
 
-* use_jynx - Remove the integrated jynx-service protection (default: false)
-* report_method - proc to be executed in the case of error
-* env_name - environment name (production|staging|development etc..)
-* config_folder - path to the configuration folder of the restful_services.yml file.
-* user_agent - user agent... duh! (users_service|mobile_service|etc..)
-* legacy_postfix - Legacy version accessed the restful_services.yml with an additional postfix in the yaml.
+* :use_jynx - Remove the integrated jynx-service protection (default: false)
+* :report_method - proc to be executed in the case of error
+* :env_name - environment name (production|staging|development etc..)
+* :config_folder - path to the configuration folder of the restful_services.yml file.
+* :user_agent - HTTP User-Agent agent, to be added to identify caller (users|mobile_service|anyname etc..)
+* :legacy_postfix - Legacy version accessed the restful_services.yml with an additional postfix in the yaml.
 
 ## Usage
 
@@ -123,7 +123,7 @@ Given:
 ````
 <pre>
 
-  RestfulClient.srv_url('posts') # ==> http://1.2.3.4:8383/api/v0/
+  RestfulClient.srv_url('users') # ==> http://1.2.3.4:8383/api/v0/
 </pre>
 
 ## Contributing
