@@ -12,7 +12,7 @@ An HTTP framework for micro-services based environment, build on top of [typhoeu
 
 * Clean restful api supporting http verbs (GET/PUT/POST/DELETE)
 * Manage Failures -  set stubs for case of errors and SERVICE_DOWN event from [Jynx](https://github.com/AvnerCohen/service-jynx)
-* Strcutured and configurable YAML for multiple service end points
+* Structured and configurable YAML for multiple service end points
 * Build using Typheous, a fast and robuts http client, built on top of libcurl
 * Configurable timeouts for http request
 
