@@ -145,16 +145,15 @@ module RestfulClient
         error_description = prettify_logger(error_type, request, response)
         logger.error { "#{error_type} #{response.code}/#{response.return_code} for: #{error_description}" }
 
-        report_method.call("RestError", error_description, exception)
-        exception = RuntimeError.new(error_description)
 
+        exception = RuntimeError.new(error_description)
         exception.set_backtrace(caller)
+        report_method.call("RestError", error_description, exception)
 
         raise RestError.new(error_type)
       else
 
         raise RestError.new(:BadReturnCode)
-
       end
     end
     request.run
