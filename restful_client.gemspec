@@ -4,7 +4,7 @@ require 'restful_client/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'restful_client'
-  spec.version       = RestfulClient::VERSION
+  spec.version       = '0.2.0'
   spec.authors       = ['Avner Cohen']
   spec.email         = ['israbirding@gmail.com']
   spec.description   = 'An HTTP framework for micro-services based environment, build on top of Typheous and Service Jynx'
