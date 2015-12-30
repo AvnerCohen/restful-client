@@ -18,8 +18,8 @@ module RestfulClient
   @@logger = nil
   @@timeout_occured_count = 0
 
-  SERVER_SIDE_ERRORS_RANGE = 500
-  CLIENT_SIDE_ERRORS_RANGE = 400
+  SERVER_SIDE_ERRORS_RANGE = 500 unless defined?(SERVER_SIDE_ERRORS_RANGE)
+  CLIENT_SIDE_ERRORS_RANGE = 400 unless defined?(CLIENT_SIDE_ERRORS_RANGE)
 
   def self.configure
     @@configuration ||= RestfulClientConfiguration.new
@@ -54,12 +54,6 @@ module RestfulClient
     headers, payload_as_str = prepare_payload_with_headers(payload, extra.fetch('headers', {}))
     request_args = { headers: headers, method: 'POST', body: payload_as_str, timeout: timeout }
     request = Typhoeus::Request.new(url, request_args.merge(extra.fetch('args', {})))
-    run_safe_request(caller, request, false, &on_error_block)
-  end
-
-  def post_raw(caller, path, payload, custom_timeout = timeout, &on_error_block)
-    url = RestfulClientUri.uri_join(callerr_config(caller)['url'], path)
-    request = Typhoeus::Request.new(url, method: 'POST', body: payload, timeout: custom_timeout)
     run_safe_request(caller, request, false, &on_error_block)
   end
 

@@ -15,6 +15,8 @@ module MyApp
           [500, { 'Content-Type' => 'application/json' }, { counter: @@counter }.to_json]
         elsif path == '/api/v0/bounce'
           [200, { 'Content-Type' => 'text/plain' }, env['rack.input'].gets]
+        elsif path == '/api/v0/non_json'
+          [200, { 'Content-Type' => 'text/plain' }, 'moshe']
         elsif path == '/api/v0/non_existing'
           [404, { 'Content-Type' => 'text/plain' }, {}.to_json]
         elsif path == '/api/v0/server_error'

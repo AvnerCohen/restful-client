@@ -422,4 +422,21 @@ describe :RestfulClient do
       expect(RestfulClient.srv_url('posts')).to eq('http://1.2.3.4:8383/api/v0/')
     end
   end
+
+  describe :NonJsonResponse do
+    it 'should fail to block when server side returns a plain string rather than json' do
+      RestfulClient.configure do |config|
+        config.env_name = 'production'
+        config.config_folder = 'spec/config'
+        config.report_method = proc do |*args|
+          klass = args.first
+          set_global(klass)
+        end
+      end
+
+      RestfulClient.get('locally', '/non_json') { |msg|  $some_global = msg}
+      expect($some_global).to include('unexpected token')
+    end
+  end
+
 end
