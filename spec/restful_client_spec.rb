@@ -434,9 +434,8 @@ describe :RestfulClient do
         end
       end
 
-      RestfulClient.get('locally', '/non_json') { |msg|  $some_global = msg}
+      RestfulClient.get('locally', '/non_json') { |msg| $some_global = msg }
       expect($some_global).to include('unexpected token')
     end
   end
-
 end
