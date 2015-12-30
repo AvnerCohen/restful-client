@@ -201,10 +201,6 @@ describe :RestfulClient do
       RestfulClient.configure do |config|
         config.env_name = 'production'
         config.config_folder = 'spec/config'
-        config.report_method = proc do |*args|
-          klass = args.first
-          set_global(klass)
-        end
       end
       RestfulClient.get('locally', '/client_error') { nil }
 
@@ -215,10 +211,6 @@ describe :RestfulClient do
       RestfulClient.configure do |config|
         config.env_name = 'production'
         config.config_folder = 'spec/config'
-        config.report_method = proc do |*args|
-          klass = args.first
-          set_global(klass)
-        end
       end
 
       RestfulClient.get('locally', '/non_existing') { nil }
@@ -231,11 +223,8 @@ describe :RestfulClient do
         RestfulClient.configure do |config|
           config.env_name = 'production'
           config.config_folder = 'spec/config'
-          config.report_method = proc do |*args|
-            klass = args.first
-            set_global(klass)
-          end
         end
+
         0.upto(9) do
           RestfulClient.get('locally', '/non_existing') { 'default' }
         end
@@ -262,6 +251,25 @@ describe :RestfulClient do
 
         expect($some_global).to eq('ServiceJynx')
       end
+
+      it 'should not call server after max errors with http_code => 500' do
+        RestfulClient.configure do |config|
+          config.env_name = 'production'
+          config.config_folder = 'spec/config'
+          config.report_method = proc do |*args|
+            klass = args.first
+            set_global(klass)
+          end
+        end
+        0.upto(10) do
+          RestfulClient.get('locally', '/server_error') { 'default' }
+        end
+
+        RestfulClient.get('locally', '/server_error') { |msg| $some_global = msg }
+
+        expect($some_global).to include('set as down')
+      end
+
     end
   end
 
@@ -428,10 +436,6 @@ describe :RestfulClient do
       RestfulClient.configure do |config|
         config.env_name = 'production'
         config.config_folder = 'spec/config'
-        config.report_method = proc do |*args|
-          klass = args.first
-          set_global(klass)
-        end
       end
 
       RestfulClient.get('locally', '/non_json') { |msg| $some_global = msg }

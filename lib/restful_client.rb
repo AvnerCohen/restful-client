@@ -11,9 +11,6 @@ module RestfulClient
 
   class RestError < StandardError; end
 
-  class << self
-    attr_writer :configuration, :logger, :timeout_occured_count
-  end
   @@configuration = nil
   @@logger = nil
   @@timeout_occured_count = 0
@@ -158,7 +155,6 @@ module RestfulClient
         logger.error { "#{error_type} #{response.code}/#{response.return_code} for: #{error_description}" }
         return ''
       else
-
         fail RestError.new(:BadReturnCode)
       end
     end
