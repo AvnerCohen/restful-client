@@ -1,10 +1,9 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'restful_client/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'restful_client'
-  spec.version       = '0.2.0'
+  spec.version       = '0.3.0'
   spec.authors       = ['Avner Cohen']
   spec.email         = ['israbirding@gmail.com']
   spec.description   = 'An HTTP framework for micro-services based environment, build on top of Typheous and Service Jynx'
