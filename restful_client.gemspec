@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['israbirding@gmail.com']
   spec.description   = 'An HTTP framework for micro-services based environment, build on top of Typheous and Service Jynx'
   spec.summary       = 'An HTTP framework for micro-services based environment'
-  spec.homepage      = 'https://github.com/AvnerCohen/restful_client'
+  spec.homepage      = 'https://github.com/AvnerCohen/restful-client'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
@@ -16,8 +16,6 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'bundler'
-
-  spec.add_runtime_dependency 'service_jynx'
-  spec.add_runtime_dependency 'typhoeus'
+  spec.add_runtime_dependency 'service_jynx', '~> 0'
+  spec.add_runtime_dependency 'typhoeus', '~> 0'
 end
