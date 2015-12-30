@@ -7,5 +7,4 @@ module RestfulClientUri
   def uri_join(url, path)
     File.join(url, path).to_s
   end
-
 end

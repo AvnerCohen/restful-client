@@ -7,14 +7,15 @@ module RestfulClientLogger
 
   def rails_logger
     (defined?(Rails) && Rails.respond_to?(:logger) && Rails.logger) ||
-    (defined?(RAILS_DEFAULT_LOGGER) && RAILS_DEFAULT_LOGGER.respond_to?(:debug) && RAILS_DEFAULT_LOGGER)
+      (defined?(RAILS_DEFAULT_LOGGER) && RAILS_DEFAULT_LOGGER.respond_to?(:debug) && RAILS_DEFAULT_LOGGER)
   end
 
   def default_logger
     require 'logger'
-    l = Logger.new(STDOUT)
-    l.level = Logger::INFO
-    l
+    alogger = Logger.new(STDOUT)
+    alogger.level = Logger::INFO
+    alogger.datetime_format = '%c'
+    alogger
   end
 
   def logger=(logger)

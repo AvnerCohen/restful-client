@@ -1,5 +1,5 @@
 sudo: false
-script: "bundle exec rspec"
+script: 'bundle exec rspec'
 language: ruby
 rvm:
-  - 2.2.0
+  - 2.2
