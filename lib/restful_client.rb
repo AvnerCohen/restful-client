@@ -107,7 +107,7 @@ module RestfulClient
       # 200, OK
       if response.success?
         logger.debug { "Success in #{method} :: Code: #{response.response_code}, #{response.body}" }
-        return '' if response.body.empty?
+        return '' if response.body.empty? || response.body == ' '
         begin
           return JSON.parse(response.body)
         rescue => e
