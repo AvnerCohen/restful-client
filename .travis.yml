@@ -2,4 +2,4 @@ sudo: false
 script: 'bundle exec rspec'
 language: ruby
 rvm:
-  - 2.2
+  - 2.2.3
