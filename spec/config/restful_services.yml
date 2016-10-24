@@ -4,9 +4,9 @@ default: &default
   posts:
     url: http://1.2.3.4:8383/api/v1/
   locally:
-    url: http://127.0.0.1:8383/api/v1/
+    url: http://localhost:8383/api/v1/
   pompa_service:
-    url: http://127.0.0.1:8383/api/v1/
+    url: http://localhost:8383/api/v1/
 
 
 development: &development
@@ -19,4 +19,4 @@ production: &production
   posts:
     url: http://1.2.3.4:8383/api/v0/
   locally:
-    url: http://127.0.0.1:8383/api/v0/
+    url: http://localhost:8383/api/v0/
