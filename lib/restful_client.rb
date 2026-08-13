@@ -41,7 +41,7 @@ module RestfulClient
     url = RestfulClientUri.uri_join(callerr_config(caller)['url'], path)
     headers = { 'Accept' => 'application/json' }
     headers.merge!(extra.fetch('headers', {}))
-    request_args = { headers: headers, method: 'GET', timeout: timeout, params: params }.merge(extra.fetch('args', {}))
+    request_args = { headers: headers, method: 'GET', timeout: timeout_for(caller), params: params }.merge(extra.fetch('args', {}))
     request = Typhoeus::Request.new(url, request_args.merge(extra.fetch('args', {})))
     run_safe_request(caller, request, true, &on_error_block)
   end
@@ -49,7 +49,7 @@ module RestfulClient
   def post(caller, path, payload, extra = {}, &on_error_block)
     url = RestfulClientUri.uri_join(callerr_config(caller)['url'], path)
     headers, payload_as_str = prepare_payload_with_headers(payload, extra.fetch('headers', {}))
-    request_args = { headers: headers, method: 'POST', body: payload_as_str, timeout: timeout }
+    request_args = { headers: headers, method: 'POST', body: payload_as_str, timeout: timeout_for(caller) }
     request = Typhoeus::Request.new(url, request_args.merge(extra.fetch('args', {})))
     run_safe_request(caller, request, false, &on_error_block)
   end
@@ -57,7 +57,7 @@ module RestfulClient
   def delete(caller, path, payload = {}, extra = {}, &on_error_block)
     url = RestfulClientUri.uri_join(callerr_config(caller)['url'], path)
     headers, payload_as_str = prepare_payload_with_headers(payload, extra.fetch('headers', {}))
-    request_args = { headers: headers, method: 'DELETE', body: payload_as_str, timeout: timeout }
+    request_args = { headers: headers, method: 'DELETE', body: payload_as_str, timeout: timeout_for(caller) }
     request = Typhoeus::Request.new(url, request_args.merge(extra.fetch('args', {})))
     run_safe_request(caller, request, true, &on_error_block)
   end
@@ -65,7 +65,7 @@ module RestfulClient
   def put(caller, path, payload, extra = {}, &on_error_block)
     url = RestfulClientUri.uri_join(callerr_config(caller)['url'], path)
     headers, payload_as_str = prepare_payload_with_headers(payload, extra.fetch('headers', {}))
-    request = Typhoeus::Request.new(url, headers: headers, method: 'PUT', body: payload_as_str, timeout: timeout)
+    request = Typhoeus::Request.new(url, headers: headers, method: 'PUT', body: payload_as_str, timeout: timeout_for(caller))
     run_safe_request(caller, request, false, &on_error_block)
   end
 
@@ -78,10 +78,10 @@ module RestfulClient
   def run_safe_request(caller, request, retry_if_needed, &on_error_block)
     @@timeout_occured_count = 0
     if !use_jynx?
-      response = run_request(request.dup, __method__, false)
+      response = run_request(request.dup, __method__, false, caller)
     elsif ServiceJynx.alive?(caller)
       begin
-        response = run_request(request.dup, __method__, retry_if_needed)
+        response = run_request(request.dup, __method__, retry_if_needed, caller)
       end while response.is_a?(Typhoeus::Response)
 
       response
@@ -99,7 +99,7 @@ module RestfulClient
     on_error_block.call("Exception in #{caller} execution - #{e.message}") if on_error_block
   end
 
-  def run_request(request, method, retry_if_needed)
+  def run_request(request, method, retry_if_needed, service_name)
     logger.debug { "#{__method__} :: Request :: #{request.inspect}" }
     request.options[:headers].merge!('X-Forwarded-For' => $client_ip) if $client_ip
     request.options[:headers].merge!('User-Agent' => user_agent)
@@ -117,7 +117,7 @@ module RestfulClient
         # Timeout occured
       elsif response.timed_out?
         @@timeout_occured_count += 1
-        skip_raise = (retry_if_needed && @@timeout_occured_count <= retries)
+        skip_raise = (retry_if_needed && @@timeout_occured_count <= retries_for(service_name))
 
         error_type = 'TimeoutOccured'
         error_description = prettify_logger(error_type, request, response)
@@ -208,5 +208,13 @@ module RestfulClient
     return "#{type} with no request or response." unless request || response
     "#{type} #{response.code}/#{response.return_code} for: #{request.options.fetch(:method)}, "\
     "#{request.base_url}, Total time: #{response.total_time} seconds"
+  end
+
+  def timeout_for(service_name)
+    callerr_config(service_name)['timeout'] || timeout
+  end
+
+  def retries_for(service_name)
+    callerr_config(service_name)['retries'] || retries
   end
 end
